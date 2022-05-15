@@ -5,4 +5,4 @@ INCLUDE_PATHS = -Iinclude -Iinclude/SDL2 -Iinclude/headers
 LIBRARY_PATHS = -Llib
 
 all:
-	$(CC) $(INCLUDE_PATHS) $(LIBRARY_PATHS) -o game ${SRC_FILES} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+	$(CC) $(INCLUDE_PATHS) $(LIBRARY_PATHS) -o game ${SRC_FILES} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -mwindows

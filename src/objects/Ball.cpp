@@ -134,34 +134,34 @@ void Ball::reset()
     lauchedVelocityValue = 0;
 }
 
-void Ball::setLines(vector<SDL_Point> points)
-{
-    setNumOfLines((int)points.size());
-    //    cout << numOfLines << endl;
-    //    cout << "start: " << points[0].x << " - " << points[0].y << endl;
-    //    cout << "end: " << points[1].x << " - " << points[1].y << endl;
-    for (int i = 0; i < points.size(); i++)
-    {
-        //        cout << points[i].x << " " << points[i].y << endl;
-        lines[i] = points[i];
-        //        cout << i + 1 << ". " << lines[i].x << " " << lines[i].y << endl;
-    }
-}
+// void Ball::setLines(vector<SDL_Point> points)
+// {
+//     setNumOfLines((int)points.size());
+//     //    cout << numOfLines << endl;
+//     //    cout << "start: " << points[0].x << " - " << points[0].y << endl;
+//     //    cout << "end: " << points[1].x << " - " << points[1].y << endl;
+//     for (int i = 0; i < points.size(); i++)
+//     {
+//         //        cout << points[i].x << " " << points[i].y << endl;
+//         lines[i] = points[i];
+//         //        cout << i + 1 << ". " << lines[i].x << " " << lines[i].y << endl;
+//     }
+// }
 
-SDL_Point *Ball::getLines()
-{
-    return lines;
-}
+// SDL_Point *Ball::getLines()
+// {
+//     return lines;
+// }
 
-void Ball::setNumOfLines(int num)
-{
-    numOfLines = num;
-}
+// void Ball::setNumOfLines(int num)
+// {
+//     numOfLines = num;
+// }
 
-int Ball::getNumOfLines()
-{
-    return numOfLines;
-}
+// int Ball::getNumOfLines()
+// {
+//     return numOfLines;
+// }
 
 // function for updating the ball positions when swung, hit walls and hit goals
 void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool isMousePressed, vector<Tile> tiles, vector<Spike> spikes, vector<Axe> axes, Hole hole, int &_gameState)
@@ -282,7 +282,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
     }
     else
     {
-        setNumOfLines(0);
+        // setNumOfLines(0);
         setVelocity(getArrowVelocity().x, getArrowVelocity().y);
         points.at(0).setPos(-699, -699);
         powerBar.at(0).setPos(-699, -699);

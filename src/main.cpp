@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <iostream>
 #include <SDL.h>
 #include <background_functions.hpp>
@@ -18,6 +19,8 @@ int main(int argc, const char **argv)
     int width = 800, height = 600;
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
+
+    initSDL(window, renderer, windowTitle, width, height);
 
     int lvl = 0;
     int gameState = 1;
