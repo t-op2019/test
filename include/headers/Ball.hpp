@@ -48,10 +48,6 @@ public:
     void setLauchVelocity(double x, double y);
     void update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool isMousePressed, vector<Tile> tiles, vector<Spike> spikes, vector<Axe> axes, Hole hole, int &_gameState);
     void reset();
-    // void setLines(vector<SDL_Point> points);
-    // SDL_Point *getLines();
-    // void setNumOfLines(int num);
-    // int getNumOfLines();
 
 private:
     Vector velocity;
@@ -71,10 +67,6 @@ private:
 
     SDL_Rect rect;
 
-    // the constant friction that slows down the speed of the ball
-    double friction = 0.001;
     vector<Entity> points;
     vector<Entity> powerBar;
-    // int numOfLines = 0;
-    // SDL_Point lines[];
 };
