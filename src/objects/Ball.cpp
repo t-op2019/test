@@ -135,7 +135,7 @@ void Ball::reset()
 }
 
 // function for updating the ball positions when swung, hit walls and hit goals
-void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool isMousePressed, vector<Tile> tiles, vector<Spike> spikes, vector<Axe> axes, Hole hole, int &_gameState)
+void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool isMousePressed, vector<Tile> tiles, vector<Spike> spikes, vector<Axe> axes, Hole hole, int &_gameState, int &_loseContext)
 {
     //    cout << swung << endl;
     if (win)
@@ -254,6 +254,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
             {
                 reset();
                 _gameState = 3;
+                _loseContext = 3;
             }
             else if (tile.getIsSticky() && !swung)
             {
@@ -282,6 +283,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
             {
                 reset();
                 _gameState = 3;
+                _loseContext = 3;
             }
             else if (tile.getIsSticky() && !swung)
             {
@@ -317,6 +319,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
             {
                 reset();
                 _gameState = 3;
+                _loseContext = 3;
             }
         }
     }

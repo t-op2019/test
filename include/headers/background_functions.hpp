@@ -45,14 +45,10 @@ void renderArrow(Entity &entity);
 
 void renderSword(Entity &entity);
 
-vector<Tile> loadTiles(int lvl);
-
-vector<Tile> loadSpikes(int lvl);
-
-vector<Spike> loadIntervalSpikes(int lvl);
-
-void loadLevels(int lvl);
-
 void renderLevelText(int lvl, int currentStrokes, int currentBounces);
 
 void renderRequirements(int _currentStrokes, int _currentBounces);
+
+void renderReplay();
+
+void renderLose(int loseContext);

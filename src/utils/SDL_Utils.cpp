@@ -135,18 +135,6 @@ void quitSDL(SDL_Window *window, SDL_Renderer *renderer)
     SDL_Quit();
 }
 
-void waitTilKeypress()
-{
-    SDL_Event e;
-    while (true)
-    {
-        if (SDL_WaitEvent(&e) != 0 &&
-            (e.type == SDL_KEYDOWN || e.type == SDL_QUIT))
-            return;
-        SDL_Delay(100);
-    }
-}
-
 string interpretKey(SDL_KeyboardEvent *key)
 {
     return SDL_GetKeyName(key->keysym.sym);
@@ -167,6 +155,22 @@ void renderText(int fontSize, const char *input, SDL_Renderer *renderer, int x, 
     SDL_Texture *message = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     renderTexture(message, renderer, x, y);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(message);
+}
+
+void renderTextCenter(const char *input, SDL_Renderer *renderer, int y)
+{
+    SDL_Color white = {255, 255, 255};
+
+    int textureWidth = 0;
+
+    SDL_Surface *textSurface = TTF_RenderText_Solid(Bridge, input, white);
+    SDL_Texture *message = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_QueryTexture(message, NULL, NULL, &textureWidth, NULL);
+
+    renderTexture(message, renderer, 400 - textureWidth / 2, y);
+
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(message);
 }

@@ -23,6 +23,12 @@ int lvl;
 // 3: fail stage
 int gameState = 1;
 
+// loseContext: reason for losing
+// 1: maximum strokes exceeded
+// 2: maximum bounces exceeded
+// 3: touched spike
+int loseContext = 0;
+
 bool *wonGame = NULL;
 
 bool mouseDown = false;
@@ -67,8 +73,10 @@ void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _wi
     wonGame = _wonGame;
 }
 
+// load all neccessary textures
 void loadAllTexture()
 {
+    // default path to images folder
     const string defaultRoutes = "assets/images/";
 
     background = loadTexture(defaultRoutes + "bg.png", renderer);
@@ -99,6 +107,7 @@ void loadAllTexture()
     loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
 }
 
+// unload all textures and quit SDL
 void unloadAllTexture()
 {
     SDL_DestroyTexture(background);
@@ -119,6 +128,7 @@ void unloadAllTexture()
     quitSDL(window, renderer);
 }
 
+// update states of objects in the game
 void update(bool &_isPlaying, SDL_Event _event)
 {
     event = _event;
@@ -133,8 +143,9 @@ void update(bool &_isPlaying, SDL_Event _event)
     // if the number of strokes or bounces exceeds the maximum number, reset the level
     if (balls[0].getStroke() > requirements.x || balls[0].getBounce() > requirements.y)
     {
+        loseContext = balls[0].getStroke() > requirements.x ? 1 : 2;
         gameState = 3;
-        balls[0].reset();
+        // balls[0].reset();
     }
 
     // get controls
@@ -145,14 +156,13 @@ void update(bool &_isPlaying, SDL_Event _event)
         if (*wonGame)
         {
             lvl = -1;
-            gameState = 1;
             *wonGame = false;
         }
-        else
-        {
-            gameState = 3;
-        }
+
+        gameState = 1;
+        loseContext = 0;
         balls[0].reset();
+        loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
     }
 
     // get other events
@@ -178,9 +188,10 @@ void update(bool &_isPlaying, SDL_Event _event)
         break;
     }
 
+    // if is in the game, update ball and other objects
     if (gameState == 1)
     {
-        balls[0].update(renderer, delta, mouseDown, mousePressed, tiles, spikes, axes, hole, gameState);
+        balls[0].update(renderer, delta, mouseDown, mousePressed, tiles, spikes, axes, hole, gameState, loseContext);
         // update spinning spikes
         for (int i = 0; i < axes.size(); i++)
         {
@@ -194,10 +205,12 @@ void update(bool &_isPlaying, SDL_Event _event)
         balls[0].resetSwung(counter);
     }
 
+    // if failed the level, stop the ball
     if (gameState == 3)
     {
-        loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
-        gameState = 1;
+        balls[0].reset();
+        // loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
+        // gameState = 1;
     }
 
     if (balls[0].hasWon() && lvl == 2)
@@ -263,12 +276,12 @@ void refresh()
     renderObject(balls[0]);
 
     // render spinning axes
-    for (Axe axe : axes)
-    {
-        renderSword(axe);
-        //        Ball testBall = Ball(Vector(axe.getEndpoint().x, axe.getEndpoint().y), ballTxture, point, powerBar, powerBarBg, 1);
-        //        renderObject(testBall);
-    }
+    // for (Axe axe : axes)
+    // {
+    //     renderSword(axe);
+    //     //        Ball testBall = Ball(Vector(axe.getEndpoint().x, axe.getEndpoint().y), ballTxture, point, powerBar, powerBarBg, 1);
+    //     //        renderObject(testBall);
+    // }
 
     // render path prediction line
     //    int numOfLines = ball.getNumOfLines();
@@ -277,11 +290,17 @@ void refresh()
     //        SDL_RenderDrawLines(renderer, ball.getLines(), numOfLines);
     //    }
 
+    if (loseContext > 0)
+    {
+        renderLose(loseContext);
+        renderReplay();
+    }
+
     if (*wonGame)
     {
         //        cout << "what the fuck" << endl;
         renderText(36, "YOU HAVE WON!", renderer, width / 2 - 100, height / 2);
-        renderText(36, "Press R to play again", renderer, width / 2 - 120, height / 2 + 30);
+        renderReplay();
     }
 
     renderPresent();
@@ -379,7 +398,7 @@ void renderLevelText(int lvl, int currentStrokes, int currentBounces)
     string stringTxt = "LEVEL " + level;
 
     const char *text = stringTxt.c_str();
-    renderText(36, text, renderer, 20, 12);
+    renderText(36, text, renderer, 10, 10);
     renderRequirements(currentStrokes, currentBounces);
 }
 
@@ -394,5 +413,17 @@ void renderRequirements(int _currentStrokes, int _currentBounces)
 
     const char *text = stringTxt.c_str();
 
-    renderText(28, text, renderer, width - 320, 16);
+    renderText(28, text, renderer, 10, 36);
+}
+
+void renderReplay()
+{
+    renderTextCenter("Press R to play again", renderer, height / 2 + 30);
+}
+
+void renderLose(int loseContext)
+{
+    const string loseMessage = loseContext == 1 ? "Maximum strokes exceeded" : loseContext == 2 ? "Maximum bounces exceeded"
+                                                                                                : "Touched spike";
+    renderTextCenter(loseMessage.c_str(), renderer, height / 2);
 }
