@@ -6,6 +6,7 @@
 //
 
 #include <level_loader.hpp>
+#include <cmath>
 
 vector<Tile> loadWalls(int lvl, SDL_Texture *wallTexture, SDL_Texture *spikedWallTexture, SDL_Texture *stickyWallTexture)
 {
@@ -167,6 +168,13 @@ void loadLevel(int lvl, vector<Tile> &tiles, vector<Spike> &spikes, vector<Axe> 
         break;
 
     default:
+        Vector initialBallPos = Vector(rand() % 785, rand() % 585);
+        Vector initialBallVelocity = Vector(sqrt(5) / (double)(rand() % 3 + 1), sqrt(5) / (double)(rand() % 3 + 1));
+        ball.setPos(initialBallPos.x, initialBallPos.y);
+        ball.setVelocity(initialBallVelocity.x, initialBallVelocity.y);
+        ball.setArrowVelocity(initialBallVelocity.x, initialBallVelocity.y);
+        hole.setPos(-69, -69);
+        requirements = Vector(699, 699);
         break;
     }
     holePos = Vector(hole.getPos().x, hole.getPos().y);

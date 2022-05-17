@@ -52,6 +52,6 @@ SDL_Rect renderButton(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y
 // ***********************************************************
 
 void renderText(int fontSize, const char *input, SDL_Renderer *renderer, int x, int y);
-void renderTextCenter(const char *input, SDL_Renderer *renderer, int y);
+void renderTextCenter(const char *input, SDL_Renderer *renderer, int y, bool startScreen = false);
 
 // ***********************************************************

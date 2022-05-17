@@ -21,7 +21,7 @@ int lvl;
 // 1: in game
 // 2: end screen
 // 3: fail stage
-int gameState = 1;
+int gameState;
 
 // loseContext: reason for losing
 // 1: maximum strokes exceeded
@@ -47,6 +47,9 @@ int counter = 0;
 // current position of the hole
 Vector currentHolePos = Vector(0, 0);
 
+Vector initialBallPos = Vector(0, 0);
+Vector initialBallVelocity = Vector(0, 0);
+
 SDL_Texture *background, *playButton, *ballTxture, *ballShadow, *holeTxture, *point, *powerBar, *powerBarBg, *wall, *spikeTileInactive, *spikeTileActive, *spikeWall, *stickyWall, *axe;
 
 Ball ball = Ball(Vector(0, 0), ballTxture, point, powerBar, powerBarBg);
@@ -61,7 +64,7 @@ vector<Axe> axes = {};
 // requirements.y: maximum number of bounces
 Vector requirements = Vector(0, 0);
 
-void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _windowTitle, int _width, int _height, int _lvl, int &_gameState, bool *_wonGame)
+void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _windowTitle, int _width, int _height, int _lvl, int &_gameState, bool *_wonGame, Vector initialPos, Vector initialVelocity)
 {
     window = _window;
     renderer = _renderer;
@@ -71,6 +74,8 @@ void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _wi
     lvl = _lvl;
     gameState = _gameState;
     wonGame = _wonGame;
+    initialBallPos = Vector(initialPos.x, initialPos.y);
+    initialBallVelocity = Vector(initialVelocity.x, initialVelocity.y);
 }
 
 // load all neccessary textures
@@ -128,6 +133,11 @@ void unloadAllTexture()
     quitSDL(window, renderer);
 }
 
+void loadStartScreen(bool &_isPlaying, SDL_Event _event)
+{
+    event = _event;
+}
+
 // update states of objects in the game
 void update(bool &_isPlaying, SDL_Event _event)
 {
@@ -149,6 +159,14 @@ void update(bool &_isPlaying, SDL_Event _event)
     }
 
     // get controls
+    if (interpretKey(&event.key) == "Return" && gameState == 0)
+    {
+        lvl = 0;
+        gameState = 1;
+        loseContext = 0;
+        balls[0].reset();
+        loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
+    }
 
     // reset level if player hit R key
     if (interpretKey(&event.key) == "R")
@@ -186,6 +204,11 @@ void update(bool &_isPlaying, SDL_Event _event)
             balls[0].setStroke(balls[0].getStroke() + 1);
         }
         break;
+    }
+
+    if (gameState == 0)
+    {
+        balls[0].update(renderer, delta, mouseDown, mousePressed, tiles, spikes, axes, hole, gameState, loseContext);
     }
 
     // if is in the game, update ball and other objects
@@ -255,7 +278,14 @@ void refresh()
     }
 
     // render level text
-    renderLevelText(lvl, balls[0].getStroke(), balls[0].getBounce());
+    if (gameState != 0)
+    {
+        renderLevelText(lvl, balls[0].getStroke(), balls[0].getBounce());
+    }
+    else
+    {
+        renderStartScreen();
+    }
 
     // render ball
     if (!balls[0].hasWon())
@@ -426,4 +456,10 @@ void renderLose(int loseContext)
     const string loseMessage = loseContext == 1 ? "Maximum strokes exceeded" : loseContext == 2 ? "Maximum bounces exceeded"
                                                                                                 : "Touched spike";
     renderTextCenter(loseMessage.c_str(), renderer, height / 2);
+}
+
+void renderStartScreen()
+{
+    renderTextCenter("Dungeon Golf", renderer, height / 2 - 100, true);
+    renderTextCenter("Press ENTER to start", renderer, height / 2);
 }

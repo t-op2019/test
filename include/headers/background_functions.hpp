@@ -23,13 +23,15 @@
 
 using namespace std;
 
-void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _windowTitle, int _width, int _height, int _lvl, int &_gameState, bool *_wonGame);
+void setVariables(SDL_Window *_window, SDL_Renderer *_renderer, const string _windowTitle, int _width, int _height, int _lvl, int &_gameState, bool *_wonGame, Vector initialPos, Vector initialVelocity);
 
 void loadAllTexture();
 
 void unloadAllTexture();
 
-void update(bool &_isPlaying, SDL_Event event);
+void loadStartScreen(bool &_isPlaying, SDL_Event _event);
+
+void update(bool &_isPlaying, SDL_Event _event);
 
 void refresh();
 
@@ -52,3 +54,5 @@ void renderRequirements(int _currentStrokes, int _currentBounces);
 void renderReplay();
 
 void renderLose(int loseContext);
+
+void renderStartScreen();

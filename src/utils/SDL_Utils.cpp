@@ -7,17 +7,20 @@
 
 #include <SDL_Utils.hpp>
 
-static TTF_Font *Bridge;
+static TTF_Font *Bridge28;
+static TTF_Font *Bridge98;
 
 void init()
 {
+    const string defaultRoute = "src/assets/fonts/";
     if (TTF_Init() == -1)
     {
         cout << "TTF_Init: %s\n"
              << " " << TTF_GetError();
         exit(2);
     }
-    Bridge = TTF_OpenFont("./assets/fonts/font.ttf", 28);
+    Bridge28 = TTF_OpenFont("assets/fonts/font.ttf", 28);
+    Bridge98 = TTF_OpenFont("assets/fonts/font.ttf", 98);
 }
 
 // render images and textures functions
@@ -151,7 +154,7 @@ void renderText(int fontSize, const char *input, SDL_Renderer *renderer, int x, 
     SDL_Color white = {255, 255, 255};
 
     // text surface
-    SDL_Surface *textSurface = TTF_RenderText_Solid(Bridge, input, white);
+    SDL_Surface *textSurface = TTF_RenderText_Solid(Bridge28, input, white);
     SDL_Texture *message = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     renderTexture(message, renderer, x, y);
@@ -159,13 +162,13 @@ void renderText(int fontSize, const char *input, SDL_Renderer *renderer, int x, 
     SDL_DestroyTexture(message);
 }
 
-void renderTextCenter(const char *input, SDL_Renderer *renderer, int y)
+void renderTextCenter(const char *input, SDL_Renderer *renderer, int y, bool startScreen)
 {
     SDL_Color white = {255, 255, 255};
 
     int textureWidth = 0;
 
-    SDL_Surface *textSurface = TTF_RenderText_Solid(Bridge, input, white);
+    SDL_Surface *textSurface = TTF_RenderText_Solid(startScreen ? Bridge98 : Bridge28, input, white);
     SDL_Texture *message = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_QueryTexture(message, NULL, NULL, &textureWidth, NULL);
 

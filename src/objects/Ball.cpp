@@ -180,14 +180,16 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
     // boundary check (if the ball hits the boundary, change the direction of the velocity vector) ---------------
     if (getPos().x + getFrame().w > 800)
     {
-        bounce++;
+        if (_gameState != 0)
+            bounce++;
         setVelocity(-abs(getVelocity().x), getVelocity().y);
         setArrowVelocity(-abs(getArrowVelocity().x), getArrowVelocity().y);
         directionX = -1;
     }
     else if (getPos().x < 0)
     {
-        bounce++;
+        if (_gameState != 0)
+            bounce++;
         //        cout << directionX << endl;
         setVelocity(abs(getVelocity().x), getVelocity().y);
         setArrowVelocity(abs(getArrowVelocity().x), getArrowVelocity().y);
@@ -195,14 +197,16 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
     }
     else if (getPos().y + getFrame().h > 600)
     {
-        bounce++;
+        if (_gameState != 0)
+            bounce++;
         setVelocity(getVelocity().x, -abs(getVelocity().y));
         setArrowVelocity(getArrowVelocity().x, -abs(getArrowVelocity().y));
         directionY = -1;
     }
     else if (getPos().y < 0)
     {
-        bounce++;
+        if (_gameState != 0)
+            bounce++;
         setVelocity(getVelocity().x, abs(getVelocity().y));
         setArrowVelocity(getArrowVelocity().x, abs(getArrowVelocity().y));
         directionY = 1;
@@ -267,7 +271,8 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
             }
             else
             {
-                bounce++;
+                if (_gameState != 0)
+                    bounce++;
                 // setPos(directionX == 1 ? tile.getPos().x - 16 : tile.getPos().x + 64, newCoordinateY);
                 setVelocity(getVelocity().x * -1, getVelocity().y);
                 setArrowVelocity(getArrowVelocity().x * -1, getArrowVelocity().y);
