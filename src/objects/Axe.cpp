@@ -88,3 +88,8 @@ double Axe::getRotationRate()
 {
     return rotationRate;
 }
+
+void Axe::setRotationRate(double _rotationRate)
+{
+    rotationRate = _rotationRate;
+}

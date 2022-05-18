@@ -118,13 +118,9 @@ vector<Axe> loadAxes(int lvl, SDL_Texture *axeTexture)
     vector<Axe> temp = {};
     switch (lvl)
     {
-    case 2:
-        temp.push_back(Axe(Vector(200, 300), axeTexture, 90, 2));
-        temp.push_back(Axe(Vector(400, 300), axeTexture, 0, 2));
-        break;
-
     case 3:
         temp.push_back(Axe(Vector(400, 300), axeTexture, 90, 2));
+        break;
 
     default:
         break;
@@ -139,7 +135,7 @@ void loadLevel(int lvl, vector<Tile> &tiles, vector<Spike> &spikes, vector<Axe> 
     ball.setWin(false);
     tiles = loadWalls(lvl, wallTexture, spikedWallTexture, stickyWallTexture);
     spikes = loadSpikes(lvl, spikeTextureActive, spikeTextureInactive);
-    // axes = loadAxes(lvl, axeTexture);
+    axes = loadAxes(lvl, axeTexture);
 
     switch (lvl)
     {

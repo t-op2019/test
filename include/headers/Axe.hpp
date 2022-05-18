@@ -24,6 +24,7 @@ public:
     Vector getOrigin();
     Vector getEndpoint();
     double getRotationRate();
+    void setRotationRate(double _rotationRate);
 
 private:
     double initialAngle;

@@ -6,6 +6,7 @@
 //
 
 #include <background_functions.hpp>
+#include <render_method.hpp>
 
 // basic background functions (load/unload textures, render and rerender screen
 // *********************************************************************************
@@ -27,6 +28,7 @@ int gameState;
 // 1: maximum strokes exceeded
 // 2: maximum bounces exceeded
 // 3: touched spike
+// 4: touched spinning blade
 int loseContext = 0;
 
 bool *wonGame = NULL;
@@ -171,13 +173,16 @@ void update(bool &_isPlaying, SDL_Event _event)
     // reset level if player hit R key
     if (interpretKey(&event.key) == "R")
     {
-        if (*wonGame)
+        if (*wonGame || gameState == 0)
         {
+            gameState = 0;
             lvl = -1;
             *wonGame = false;
         }
-
-        gameState = 1;
+        else
+        {
+            gameState = 1;
+        }
         loseContext = 0;
         balls[0].reset();
         loadLevel(lvl, tiles, spikes, axes, balls[0], hole, currentHolePos, requirements, wall, spikeWall, stickyWall, spikeTileActive, spikeTileInactive, axe);
@@ -259,32 +264,32 @@ void refresh()
     // clear screen
     //    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
-    renderBackground();
+    renderTexture(background, renderer, 0, 0, width, height);
 
     // render hole
     hole.setPos(currentHolePos.x, currentHolePos.y);
-    renderObject(hole);
+    renderObject(hole, renderer);
 
     // render spiked tiles
     for (Spike spike : spikes)
     {
-        renderObject(spike);
+        renderObject(spike, renderer);
     }
 
     // render tiles
     for (Tile tile : tiles)
     {
-        renderObject(tile);
+        renderObject(tile, renderer);
     }
 
     // render level text
     if (gameState != 0)
     {
-        renderLevelText(lvl, balls[0].getStroke(), balls[0].getBounce());
+        renderLevelText(lvl, balls[0].getStroke(), balls[0].getBounce(), renderer, requirements);
     }
     else
     {
-        renderStartScreen();
+        renderStartScreen(renderer, height);
     }
 
     // render ball
@@ -295,171 +300,33 @@ void refresh()
     // render pointer arrow
     for (Entity &arrow : balls[0].getPoints())
     {
-        renderArrow(arrow);
+        renderArrow(arrow, renderer);
     }
     // render powerbar
     for (Entity &powerbar : balls[0].getPowerBar())
     {
-        renderPowerBar(powerbar);
+        renderPowerbar(powerbar, renderer);
     }
     // render ball texture
-    renderObject(balls[0]);
+    renderObject(balls[0], renderer);
 
     // render spinning axes
-    // for (Axe axe : axes)
-    // {
-    //     renderSword(axe);
-    //     //        Ball testBall = Ball(Vector(axe.getEndpoint().x, axe.getEndpoint().y), ballTxture, point, powerBar, powerBarBg, 1);
-    //     //        renderObject(testBall);
-    // }
-
-    // render path prediction line
-    //    int numOfLines = ball.getNumOfLines();
-    //    if (numOfLines > 0) {
-    //        SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    //        SDL_RenderDrawLines(renderer, ball.getLines(), numOfLines);
-    //    }
+    for (Axe &axe : axes)
+    {
+        renderSword(axe, renderer);
+    }
 
     if (loseContext > 0)
     {
-        renderLose(loseContext);
-        renderReplay();
+        renderLose(loseContext, renderer, height);
+        renderReplay(renderer, height);
     }
 
     if (*wonGame)
     {
-        //        cout << "what the fuck" << endl;
         renderText(36, "YOU HAVE WON!", renderer, width / 2 - 100, height / 2);
-        renderReplay();
+        renderReplay(renderer, height);
     }
 
-    renderPresent();
-}
-
-void renderPresent()
-{
     SDL_RenderPresent(renderer);
-}
-
-void renderBackground()
-{
-    renderTexture(background, renderer, 0, 0, width, height);
-}
-
-void renderObject(Entity entity)
-{
-    SDL_Rect destination;
-    // get position x and y of the object and centers it with various scales
-    int x = entity.getPos().x + (entity.getFrame().w - entity.getFrame().w * entity.getScale().x) / 2;
-    int y = entity.getPos().y + (entity.getFrame().h - entity.getFrame().h * entity.getScale().y) / 2;
-    // get width and height of the object (calculated after being scaled)
-    int w = entity.getFrame().w * entity.getScale().x;
-    int h = entity.getFrame().h * entity.getScale().y;
-
-    destination.x = x;
-    destination.y = y;
-    destination.w = w;
-    destination.h = h;
-
-    renderTexture(entity.getTexture(), renderer, x, y, w, h);
-}
-
-void renderPowerBar(Entity entity)
-{
-    SDL_Rect source;
-    source.x = 0;
-    source.y = 0;
-    //    source.w;
-    //    source.h;
-
-    SDL_QueryTexture(entity.getTexture(), NULL, NULL, &source.w, &source.h);
-    source.w *= entity.getScale().x;
-
-    SDL_Rect destination;
-    destination.x = entity.getPos().x;
-    destination.y = entity.getPos().y;
-    destination.w = source.w;
-    destination.h = source.h;
-
-    SDL_RenderCopy(renderer, entity.getTexture(), &source, &destination);
-}
-
-void renderArrow(Entity &entity)
-{
-    SDL_Rect destination;
-    // get position x and y of the object and centers it with various scales
-    int x = entity.getPos().x + (entity.getFrame().w - entity.getFrame().w * entity.getScale().x) / 2;
-    int y = entity.getPos().y + (entity.getFrame().h - entity.getFrame().h * entity.getScale().y) / 2;
-    // get width and height of the object (calculated after being scaled)
-    int w = entity.getFrame().w * entity.getScale().x;
-    int h = entity.getFrame().h * entity.getScale().y;
-
-    destination.x = x;
-    destination.y = y;
-    destination.w = w;
-    destination.h = h;
-
-    SDL_RenderCopyEx(renderer, entity.getTexture(), NULL, &destination, entity.getAngle(), 0, SDL_FLIP_NONE);
-}
-
-void renderSword(Entity &entity)
-{
-    SDL_Rect destination;
-    // get position x and y of the object and centers it with various scales
-    int x = entity.getPos().x + (entity.getFrame().w - entity.getFrame().w * entity.getScale().x) / 2;
-    int y = entity.getPos().y + (entity.getFrame().h - entity.getFrame().h * entity.getScale().y) / 2;
-    // get width and height of the object (calculated after being scaled)
-    int w = entity.getFrame().w * entity.getScale().x;
-    int h = entity.getFrame().h * entity.getScale().y;
-
-    destination.x = x;
-    destination.y = y;
-    destination.w = w;
-    destination.h = h;
-
-    SDL_Point rotationCenter = {5, 100};
-
-    SDL_RenderCopyEx(renderer, entity.getTexture(), NULL, &destination, entity.getAngle(), &rotationCenter, SDL_FLIP_NONE);
-}
-
-void renderLevelText(int lvl, int currentStrokes, int currentBounces)
-{
-    string level = to_string(lvl);
-    string stringTxt = "LEVEL " + level;
-
-    const char *text = stringTxt.c_str();
-    renderText(36, text, renderer, 10, 10);
-    renderRequirements(currentStrokes, currentBounces);
-}
-
-void renderRequirements(int _currentStrokes, int _currentBounces)
-{
-    string strokes = to_string((int)requirements.x);
-    string currentStrokes = to_string(_currentStrokes);
-    string bounces = to_string((int)requirements.y);
-    string currentBounces = to_string(_currentBounces);
-
-    string stringTxt = "Strokes: " + currentStrokes + " / " + strokes + "   Bounces: " + currentBounces + " / " + bounces;
-
-    const char *text = stringTxt.c_str();
-
-    renderText(28, text, renderer, 10, 36);
-}
-
-void renderReplay()
-{
-    renderTextCenter("Press R to play again", renderer, height / 2 + 30);
-}
-
-void renderLose(int loseContext)
-{
-    const string loseMessage = loseContext == 1 ? "Maximum strokes exceeded" : loseContext == 2 ? "Maximum bounces exceeded"
-                                                                                                : "Touched spike";
-    renderTextCenter(loseMessage.c_str(), renderer, height / 2);
-}
-
-void renderStartScreen()
-{
-    renderTextCenter("Dungeon Golf", renderer, height / 2 - 100, true);
-    renderTextCenter("Press ENTER to start", renderer, height / 2);
 }

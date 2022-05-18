@@ -15,7 +15,7 @@
 #include <Tile.hpp>
 #include <Hole.hpp>
 #include <Spike.hpp>
-#include "Ball.hpp"
+#include <Ball.hpp>
 #include <Axe.hpp>
 
 using namespace std;
