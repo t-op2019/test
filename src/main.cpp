@@ -23,8 +23,8 @@ int main(int argc, const char **argv)
 
     initSDL(window, renderer, windowTitle, width, height);
 
-    int lvl = -1;
-    int gameState = 0;
+    int lvl = 3;
+    int gameState = 1;
 
     bool wonGame = false;
 
