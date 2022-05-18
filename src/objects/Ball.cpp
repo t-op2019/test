@@ -212,13 +212,12 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
         directionY = 1;
     }
 
-    // get the next coordinate for x and y
-    double newCoordinateX = getPos().x;
-    double newCoordinateY = getPos().y;
-
     // check for axe collision ------------------------------------------------------------------------------------
     for (Axe &axe : axes)
     {
+        // get the next coordinate for x and y
+        double newCoordinateX = getPos().x;
+        double newCoordinateY = getPos().y;
         axe.setRotationRate(velocityValue);
         Vector axeOrigin = axe.getOrigin();
         Vector axeEndpoint = axe.getEndpoint();
@@ -246,7 +245,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
         bool hitY = false;
 
         // check if the ball hit the vertical edge of the wall
-        if (newCoordinateX + 16 > tile.getPos().x && newCoordinateX < tile.getPos().x + tile.getFrame().w && getPos().y + 16 > tile.getPos().y && getPos().y < tile.getPos().y + tile.getFrame().h - 2)
+        if (newCoordinateX + 16 > tile.getPos().x && newCoordinateX < tile.getPos().x + tile.getFrame().w && getPos().y + 16 > tile.getPos().y && getPos().y < tile.getPos().y + tile.getFrame().h - 3)
         {
             // if the wall is spiked, then reset the level
             if (tile.getIsSpike())
@@ -277,7 +276,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
             hitX = true;
         }
         // check if the ball hit the horizontal edge of the wall
-        if (getPos().x + 16 > tile.getPos().x && getPos().x < tile.getPos().x + tile.getFrame().w && newCoordinateY + 16 > tile.getPos().y && newCoordinateY < tile.getPos().y + tile.getFrame().h - 2)
+        if (getPos().x + 16 > tile.getPos().x && getPos().x < tile.getPos().x + tile.getFrame().w && newCoordinateY + 16 > tile.getPos().y && newCoordinateY < tile.getPos().y + tile.getFrame().h - 3)
         {
             if (tile.getIsSpike())
             {

@@ -241,7 +241,7 @@ void update(bool &_isPlaying, SDL_Event _event)
         // gameState = 1;
     }
 
-    if (balls[0].hasWon() && lvl == 2)
+    if (balls[0].hasWon() && lvl == 3)
     {
         *wonGame = true;
     }
