@@ -226,7 +226,7 @@ void Ball::update(SDL_Renderer *renderer, double delta, bool isMouseDown, bool i
 
         double distance = sqrt(pow(newCoordinateX + 8 - axeOrigin.x, 2) + pow(newCoordinateY + 8 - axeOrigin.y, 2));
 
-        bool ballInRadius = distance < 92;
+        bool ballInRadius = distance < 108;
 
         if (abs(ballAndOriginAngle - axeAngle) <= 4 && ballInRadius && _gameState != 0)
         {

@@ -49,10 +49,12 @@ int counter = 0;
 // current position of the hole
 Vector currentHolePos = Vector(0, 0);
 
+// used to set the ball's initial position in the start screen
 Vector initialBallPos = Vector(0, 0);
+// used to set the ball's initial velocity in the start screen
 Vector initialBallVelocity = Vector(0, 0);
 
-SDL_Texture *background, *playButton, *ballTxture, *ballShadow, *holeTxture, *point, *powerBar, *powerBarBg, *wall, *spikeTileInactive, *spikeTileActive, *spikeWall, *stickyWall, *axe;
+SDL_Texture *background, *ballTxture, *ballShadow, *holeTxture, *point, *powerBar, *powerBarBg, *wall, *spikeTileInactive, *spikeTileActive, *spikeWall, *stickyWall, *axe;
 
 Ball ball = Ball(Vector(0, 0), ballTxture, point, powerBar, powerBarBg);
 vector<Ball> balls = {};
@@ -90,7 +92,6 @@ void loadAllTexture()
     ballTxture = loadTexture(defaultRoutes + "ball.png", renderer);
     ballShadow = loadTexture(defaultRoutes + "ball_shadow.png", renderer);
     holeTxture = loadTexture(defaultRoutes + "hole.png", renderer);
-    playButton = loadTexture(defaultRoutes + "click2start.png", renderer);
     point = loadTexture(defaultRoutes + "point.png", renderer);
     powerBar = loadTexture(defaultRoutes + "power_bar.png", renderer);
     powerBarBg = loadTexture(defaultRoutes + "power_bar_bg.png", renderer);
@@ -101,7 +102,7 @@ void loadAllTexture()
     stickyWall = loadTexture(defaultRoutes + "sticky_wall.png", renderer);
     axe = loadTexture(defaultRoutes + "axe.png", renderer);
 
-    if (background == NULL | playButton == NULL | ballTxture == NULL | ballShadow == NULL | holeTxture == NULL | point == NULL | powerBar == NULL | powerBarBg == NULL | wall == NULL | spikeTileActive == NULL | spikeTileInactive == NULL | spikeWall == NULL | stickyWall == NULL)
+    if (background == NULL | ballTxture == NULL | ballShadow == NULL | holeTxture == NULL | point == NULL | powerBar == NULL | powerBarBg == NULL | wall == NULL | spikeTileActive == NULL | spikeTileInactive == NULL | spikeWall == NULL | stickyWall == NULL)
     {
         unloadAllTexture();
         exit(1);
@@ -121,7 +122,6 @@ void unloadAllTexture()
     SDL_DestroyTexture(ballTxture);
     SDL_DestroyTexture(ballShadow);
     SDL_DestroyTexture(holeTxture);
-    SDL_DestroyTexture(playButton);
     SDL_DestroyTexture(point);
     SDL_DestroyTexture(powerBar);
     SDL_DestroyTexture(powerBarBg);
@@ -173,6 +173,7 @@ void update(bool &_isPlaying, SDL_Event _event)
     // reset level if player hit R key
     if (interpretKey(&event.key) == "R")
     {
+        // return to start screen if player has won the game
         if (*wonGame || gameState == 0)
         {
             gameState = 0;
